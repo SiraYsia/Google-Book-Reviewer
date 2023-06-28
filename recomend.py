@@ -73,70 +73,65 @@ def retrieve_from_database(books_database, sort_by):
         return pd.DataFrame(query_result)
 
 
-def write_reviews(retrieve_titles):
+def write_reviews(retrieve_titles, author_name):
     title = input("Enter the title: ")
 
     # Check if the title exists in the retrieved titles
     if title in retrieve_titles['book_title'].values:
+        publication_date = retrieve_titles.loc[retrieve_titles['book_title'] == title, 'published_date'].values[0]
 
-        selected_book = retrieve_titles.loc[retrieve_titles['book_title'] == title].iloc[0]
-        author_name = selected_book['book_title']
-        publication_date = selected_book['published_date']
-
-        print(f"Now writing a review for {author_name} - {title} ({publication_date}) - Average Rating: {average_rating}")
-        username = input("Enter the username for this review: ")
-        rate = int(input ("what would you rate this book on a rate of 1 to 10"))
+        print(f"Now writing a review for {author_name} - {title} ({publication_date})")
+        rate = int(input("What would you rate this book on a scale of 1 to 10? "))
         review = input("Review: ")
+        username = input("Enter your username: ")
 
-        review_data = [{
-            'title': title,
-            'author_name': author_name,
-            'publication_date': publication_date,
-            'review': review,
-            'reviewed_by': username,
-            'rating': rate
-        }]
-        data_frame = pd.DataFrame(review_data, columns=['title', 'author_name', 'publication_date', 'review', 'reviewed_by','rating'])
+        review_data = [
+            (
+                author_name,
+                title,
+                publication_date,
+                rate,
+                review,
+                username
+            )
+        ]
+
+        data_frame = pd.DataFrame(review_data, columns=['author_name', 'title', 'publication_date', 'rate', 'review', 'username'])
+
         reviews_database = "reviews_db"
         engine = db.create_engine(f'sqlite:///{reviews_database}.db')
         with engine.connect() as connection:
-            if connection.dialect.has_table(connection, 'review_table'):
-                data_frame.to_sql('review_table', con=connection, if_exists='append', index=False)
-            else:
-                data_frame.to_sql('review_table', con=connection, if_exists='replace', index=False)
+            data_frame.to_sql('review_table', con=connection, if_exists='append', index=False)
         print("Review saved successfully!")
-        
+
     else:
         print("Invalid title. Please select a title from the retrieved books.")
-
-
-def display_reviews():
+        
+def display_reviews(aut):
     reviews_database = "reviews_db"
     engine = db.create_engine(f'sqlite:///{reviews_database}.db')
     with engine.connect() as connection:
-        query = "SELECT * FROM review_table"
-        query_result = connection.execute(db.text(query)).fetchall()
-        review_data = pd.DataFrame(query_result, columns=['title', 'author_name', 'publication_date', 'review', 'reviewed_by', 'rating'])
+        query = "SELECT * FROM review_table WHERE author_name LIKE :aut"
+        query_result = connection.execute(db.text(query), {"aut": aut}).fetchall()
+      if quer_result:
+        for index, row in enumerate(query_result):
+            author_name = row[0]
+            book_title = row[1]
+            published_date = row[2]
+            rating = row[3]
+            review = row[4]
+            reviewed_by = row[5]
+            print(f"{index + 1}. Title: {book_title}")
+            print(f"   Author: {author_name}")
+            print(f"   Published Date: {published_date}")
+            print(f"   Rating: {rating}")
+            print(f"   Review: {review}")
+            print(f"   Reviewed by: {reviewed_by}")
+            print()
+      else:
+        print("No reviews available for this author")
 
-    # Print the reviews written so far
-    print("Reviews in the database:")
-    for index, row in review_data.iterrows():
-        title = row['title']
-        author_name = row['author_name']
-        publication_date = row['publication_date']
-        review = row['review']
-        rating = row['rating']
-        reviewed_by = row['reviewed_by']
 
-        print(f"Title: {title}")
-        print(f"Author: {author_name}")
-        print(f"Publication Date: {publication_date}")
-        print(f"Review: {review}")
-        print(f"Rating: {rating}")
-        print(f"Reviewed By: {reviewed_by}")
-        print()
-
-display_reviews()
 author_name = input("Enter the author name: ")
 num_books = input("How many books would you like displayed: ")
 
@@ -167,6 +162,8 @@ for index, row in retrieve_titles.iterrows():
 answer = input("Would you like to write a review to a book? (yes or no): ")
 
 if answer.lower() == 'yes':
-    write_reviews(retrieve_titles)
-if answer.lower() == 'no':
-    display_reviews()
+    write_reviews(retrieve_titles, author_name)
+response = input("would you like to see reviews made by other people?(yes or no)")
+if response == 'yes':
+    aut = input("Enter name of an author")
+    display_reviews(aut)
