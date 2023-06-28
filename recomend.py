@@ -163,7 +163,7 @@ answer = input("Would you like to write a review to a book? (yes or no): ")
 
 if answer.lower() == 'yes':
     write_reviews(retrieve_titles, author_name)
-response = input("would you like to see reviews made by other people?(yes or no)")
+response = input("would you like to see reviews made by other people?(yes or no): ")
 if response == 'yes':
     aut = input("Enter name of an author")
     display_reviews(aut)
