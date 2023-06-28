@@ -111,7 +111,7 @@ def display_reviews(aut):
     reviews_database = "reviews_db"
     engine = db.create_engine(f'sqlite:///{reviews_database}.db')
     with engine.connect() as connection:
-        query = "SELECT * FROM review_table WHERE author_name LIKE :aut"
+        query = "SELECT * FROM review_table WHERE author_name LIKE :aut ORDER BY rate DESC"
         query_result = connection.execute(db.text(query), {"aut": aut}).fetchall()
         if query_result:
             for index, row in enumerate(query_result):
@@ -135,7 +135,7 @@ def display_reviews(aut):
 print("Welcome to the Book Reviewer!")
 print("This program allows you to explore and review books by your favorite authors.")
 print("You'll be able to retrieve book titles, average ratings, and publication dates.")
-print("Additionally, you can write your own reviews for the books you've read and view reviews made by others.")
+print("Additionally, you can write your own reviews for the books you've read and view reviews made by others and yourself.")
 print()
 
 author_name = input("Please enter the name of the author you're interested in: ")
@@ -143,7 +143,7 @@ num_books = input("How many books would you like displayed (enetr 'all' to acces
 
 if num_books == 'all':
     num_books = 40
-    
+
 
 
 data = make_google_books_api_request(author_name, num_books)
