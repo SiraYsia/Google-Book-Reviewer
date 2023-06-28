@@ -1,61 +1,76 @@
-import requests 
-#import sqlite3 as db 
+import requests
 import pandas as pd
+import sqlalchemy as db
 import os
-import json
-import sqlalchemy as db 
+import json 
 
 
-#API integration 
-#Make a request to fetch movie data from (---) API
-
-def make_google_books_api_request(subject, num_books):
+def make_google_books_api_request(author_name, num_books):
     url = 'https://www.googleapis.com/books/v1/volumes'
     api_key = os.environ.get('BOOKS_API_KEY')
 
-    query = f'subject:{subject}'
-
-
     params = {
-        'q': 'subject:{subject}',
-        'orderBy': 'rating',
-        'maxResults': num_books, 
+        'q': f'inauthor:{author_name}',  # added 'inauthor' parameter to filter by author
+        'orderBy': 'relevance',
+        'maxResults': num_books,
         'key': api_key
     }
-
-    response = requests.get(url, params = params)
+    response = requests.get(url, params=params)
     data = response.json()
     return data
 
 
 def extract_book_titles(data):
-    book_titles = [item['volumeInfo']['title'] for item in data['items']]
-    return book_titles
+    book_info = []
+    unique_titles = set()
+    for item in data['items']:
+        title = item['volumeInfo']['title']
+        lowercase_title = title.lower()
+        published_date = item['volumeInfo'].get('publishedDate', 'Unknown')  # retrieve published date, default to 'Unknown' if not available
+        average_rating = item['volumeInfo'].get('averageRating', 0)  # retrieve average rating, default to 0 if not available
+        if lowercase_title not in unique_titles:
+            unique_titles.add(lowercase_title)
+            book_info.append((title, published_date, average_rating))
+    
+    return book_info
 
-def save_book_titles_to_database(book_titles, database_name):
-    data_frame = pd.DataFrame({'book_title': book_titles})
-    engine = db.create_engine(f'sqlite:///{database_name}.db')
-    data_frame.to_sql('table_name', con=engine, if_exists='replace', index=False)
 
-def retrieve_from_database(database_name):
+def save_book_titles_to_database(book_info, database_name):
+    data_frame = pd.DataFrame(book_info, columns=['book_title', 'published_date', 'average_rating'])
     engine = db.create_engine(f'sqlite:///{database_name}.db')
     with engine.connect() as connection:
-        query_result = connection.execute(db.text("SELECT * FROM table_name;")).fetchall()
+        data_frame.to_sql('table_name', con=connection, if_exists='replace', index=False)
+
+
+def retrieve_from_database(database_name, sort_by):
+    engine = db.create_engine(f'sqlite:///{database_name}.db')
+    with engine.connect() as connection:
+        if sort_by == 'publication':
+            query = "SELECT * FROM table_name ORDER BY published_date DESC"  # sort by publication date in descending order
+        elif sort_by == 'rating':
+            query = "SELECT * FROM table_name ORDER BY average_rating DESC"
+        else:
+            query = "SELECT * FROM table_name"
+
+        query_result = connection.execute(db.text(query)).fetchall()
         return pd.DataFrame(query_result)
 
-subject = input("Enter a subject for a book recomendation: ")
-num_books = int(input("Enter the number books to be suggested: "))
-
-data = make_google_books_api_request(subject, num_books)
-book_titles = extract_book_titles(data)
-save_book_titles_to_database(book_titles, 'database_name')
-retrive_titles = retrieve_from_database('database_name')
-print(retrive_titles)
+author_name = input("Enter the author name: ")
+num_books = input("How many suggestions: ")
 
 
-# 1. Prompt for subject
-# 2. Ask for a genre 
-# 3. Ask for prefrences like author 
-# 4. ask how many books they want to be suggested 
-# 4. Suggest book that match the genre based on high rating
-# 5. Ask to choose one book suggesting that they liked very much and use it in future suggestion despite ratings 
+data = make_google_books_api_request(author_name, num_books)
+
+if 'items' not in data:
+    print("Invalid author name or no books found.")
+    exit()
+
+
+book_info = extract_book_titles(data)
+save_book_titles_to_database(book_info, 'database_name')
+
+sort_option = input("Sort by (publication/rating): ")
+retrieve_titles = retrieve_from_database('database_name', sort_option)
+
+for index, row in retrieve_titles.iterrows():
+    print(f"{index + 1}. {row['book_title']} - {row['published_date']} {row['average_rating']}")
