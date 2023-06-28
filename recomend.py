@@ -113,27 +113,38 @@ def display_reviews(aut):
     with engine.connect() as connection:
         query = "SELECT * FROM review_table WHERE author_name LIKE :aut"
         query_result = connection.execute(db.text(query), {"aut": aut}).fetchall()
-      if quer_result:
-        for index, row in enumerate(query_result):
-            author_name = row[0]
-            book_title = row[1]
-            published_date = row[2]
-            rating = row[3]
-            review = row[4]
-            reviewed_by = row[5]
-            print(f"{index + 1}. Title: {book_title}")
-            print(f"   Author: {author_name}")
-            print(f"   Published Date: {published_date}")
-            print(f"   Rating: {rating}")
-            print(f"   Review: {review}")
-            print(f"   Reviewed by: {reviewed_by}")
-            print()
-      else:
-        print("No reviews available for this author")
+        if query_result:
+            for index, row in enumerate(query_result):
+                author_name = row[0]
+                book_title = row[1]
+                published_date = row[2]
+                rating = row[3]
+                review = row[4]
+                reviewed_by = row[5]
+                print(f"{index + 1}. Title: {book_title}")
+                print(f"   Author: {author_name}")
+                print(f"   Published Date: {published_date}")
+                print(f"   Rating: {rating}")
+                print(f"   Review: {review}")
+                print(f"   Reviewed by: {reviewed_by}")
+                print()
+        else:
+            print("No reviews available for this author")
 
 
-author_name = input("Enter the author name: ")
-num_books = input("How many books would you like displayed: ")
+print("Welcome to the Book Reviewer!")
+print("This program allows you to explore and review books by your favorite authors.")
+print("You'll be able to retrieve book titles, average ratings, and publication dates.")
+print("Additionally, you can write your own reviews for the books you've read and view reviews made by others.")
+print()
+
+author_name = input("Please enter the name of the author you're interested in: ")
+num_books = input("How many books would you like displayed (enetr 'all' to access all books): ")
+
+if num_books == 'all':
+    num_books = 40
+    
+
 
 data = make_google_books_api_request(author_name, num_books)
 
@@ -165,5 +176,5 @@ if answer.lower() == 'yes':
     write_reviews(retrieve_titles, author_name)
 response = input("would you like to see reviews made by other people?(yes or no): ")
 if response == 'yes':
-    aut = input("Enter name of an author")
+    aut = input("Enter name of an author: ")
     display_reviews(aut)
