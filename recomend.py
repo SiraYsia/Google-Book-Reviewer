@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import sqlalchemy as db
 import os
-import json 
+import json
 
 
 def make_google_books_api_request(author_name, num_books):
@@ -81,9 +81,12 @@ def write_reviews(retrieve_titles, author_name):
         publication_date = retrieve_titles.loc[retrieve_titles['book_title'] == title, 'published_date'].values[0]
 
         print(f"Now writing a review for {author_name} - {title} ({publication_date})")
+        print()
         rate = int(input("What would you rate this book on a scale of 1 to 10? "))
         review = input("Review: ")
         username = input("Enter your username: ")
+        print()
+
 
         review_data = [
             (
@@ -103,6 +106,8 @@ def write_reviews(retrieve_titles, author_name):
         with engine.connect() as connection:
             data_frame.to_sql('review_table', con=connection, if_exists='append', index=False)
         print("Review saved successfully!")
+        print()
+
 
     else:
         print("Invalid title. Please select a title from the retrieved books.")
@@ -131,7 +136,7 @@ def display_reviews(aut):
         else:
             print("No reviews available for this author")
 
-
+print()
 print("Welcome to the Book Reviewer!")
 print("This program allows you to explore and review books by your favorite authors.")
 print("You'll be able to retrieve book titles, average ratings, and publication dates.")
@@ -140,6 +145,7 @@ print()
 
 author_name = input("Please enter the name of the author you're interested in: ")
 num_books = input("How many books would you like displayed (enetr 'all' to access all books): ")
+
 
 if num_books == 'all':
     num_books = 40
@@ -170,11 +176,13 @@ for index, row in retrieve_titles.iterrows():
     print(f"   Average Rating: {average_rating}")
     print()
 
+
 answer = input("Would you like to write a review to a book? (yes or no): ")
 
 if answer.lower() == 'yes':
     write_reviews(retrieve_titles, author_name)
 response = input("would you like to see reviews made by other people?(yes or no): ")
 if response == 'yes':
+    print()
     aut = input("Enter name of an author: ")
     display_reviews(aut)
