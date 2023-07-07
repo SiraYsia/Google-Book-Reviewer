@@ -136,53 +136,55 @@ def display_reviews(aut):
         else:
             print("No reviews available for this author")
 
-print()
-print("Welcome to the Book Reviewer!")
-print("This program allows you to explore and review books by your favorite authors.")
-print("You'll be able to retrieve book titles, average ratings, and publication dates.")
-print("Additionally, you can write your own reviews for the books you've read and view reviews made by others and yourself.")
-print()
+# Uncomment the block of code below if you would like to interact in the terminal instead of the web and run this file
 
-author_name = input("Please enter the name of the author you're interested in: ")
-num_books = input("How many books would you like displayed (enetr 'all' to access all books): ")
+#print()
+# print("Welcome to the Book Reviewer!")
+# print("This program allows you to explore and review books by your favorite authors.")
+# print("You'll be able to retrieve book titles, average ratings, and publication dates.")
+# print("Additionally, you can write your own reviews for the books you've read and view reviews made by others and yourself.")
+# print()
 
-
-if num_books == 'all':
-    num_books = 40
+# author_name = input("Please enter the name of the author you're interested in: ")
+# num_books = input("How many books would you like displayed (enetr 'all' to access all books): ")
 
 
-
-data = make_google_books_api_request(author_name, num_books)
-
-if 'items' not in data:
-    print("Invalid author name or no books found.")
-    exit()
+# if num_books == 'all':
+#     num_books = 40
 
 
 
-book_info = extract_book_titles(data)
-save_book_titles_to_database(book_info, 'books_database')
+# data = make_google_books_api_request(author_name, num_books)
 
-sort_option = input("Sort by (publication/rating): ")
-retrieve_titles = retrieve_from_database('books_database', sort_option)
-
-for index, row in retrieve_titles.iterrows():
-    book_title = row['book_title']
-    published_date = row['published_date']
-    average_rating = row['average_rating']
-    #start indexng from 1 instead of 0
-    print(f"{index + 1}. Title: {book_title}")
-    print(f"   Published Date: {published_date}")
-    print(f"   Average Rating: {average_rating}")
-    print()
+# if 'items' not in data:
+#     print("Invalid author name or no books found.")
+#     exit()
 
 
-answer = input("Would you like to write a review to a book? (yes or no): ")
 
-if answer.lower() == 'yes':
-    write_reviews(retrieve_titles, author_name)
-response = input("would you like to see reviews made by other people?(yes or no): ")
-if response == 'yes':
-    print()
-    aut = input("Enter name of an author: ")
-    display_reviews(aut)
+# book_info = extract_book_titles(data)
+# save_book_titles_to_database(book_info, 'books_database')
+
+# sort_option = input("Sort by (publication/rating): ")
+# retrieve_titles = retrieve_from_database('books_database', sort_option)
+
+# for index, row in retrieve_titles.iterrows():
+#     book_title = row['book_title']
+#     published_date = row['published_date']
+#     average_rating = row['average_rating']
+#     #start indexng from 1 instead of 0
+#     print(f"{index + 1}. Title: {book_title}")
+#     print(f"   Published Date: {published_date}")
+#     print(f"   Average Rating: {average_rating}")
+#     print()
+
+
+# answer = input("Would you like to write a review to a book? (yes or no): ")
+
+# if answer.lower() == 'yes':
+#     write_reviews(retrieve_titles, author_name)
+# response = input("would you like to see reviews made by other people?(yes or no): ")
+# if response == 'yes':
+#     print()
+#     aut = input("Enter name of an author: ")
+#     display_reviews(aut)

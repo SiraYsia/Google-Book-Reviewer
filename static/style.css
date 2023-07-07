@@ -1,0 +1,113 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.title {
+    color: #23527c;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.description {
+    color: #333;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.form {
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.submit-btn {
+    background-color: #23527c;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #1c466b;
+}
+
+
+ol {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+ol li {
+  margin-bottom: 15px;
+}
+
+select {
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 200px;
+}
+
+a {
+  color: rgb(232, 4, 4);
+  text-decoration: none;
+}
+
+.review-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.review-card {
+  width: 300px;
+  margin: 10px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.review-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.review-details {
+  margin-top: 10px;
+}
+
+.rating {
+  color: rgb(68, 0, 255);
+  font-weight: bold;
+}
+
+.review-text {
+  margin-top: 5px;
+}
+
+.reviewed-by {
+  margin-top: 10px;
+  color: #888;
+}
+
+.username {
+  color: #555;
+}

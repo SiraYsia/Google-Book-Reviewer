@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reviews</title>
+</head>
+<body>
+    <h1>Reviews</h1>
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <h3>{{ review.title }}</h3>
+            <p>Author: {{ review.author_name }}</p>
+            <p>Published Date: {{ review.published_date }}</p>
+            <p>Rating: {{ review.rating }}</p>
+            <p>Review: {{ review.review }}</p>
+            <p>Reviewed by: {{ review.reviewed_by }}</p>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No reviews available for this author.</p>
+    {% endif %}
+    <p><a href="/books">Go Back to Book Listing</a></p>
+</body>
+</html>

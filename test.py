@@ -2,7 +2,7 @@ import unittest
 import sqlite3
 import pandas as pd
 
-from book import (
+from recomend import (
     make_google_books_api_request,
     extract_book_titles,
     save_book_titles_to_database,

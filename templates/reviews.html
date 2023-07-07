@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reviews</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="title">Reviews</h1>
+
+    <form action="/reviews" method="GET" class="form">
+        <label for="book_title">Book Title:</label>
+        <input type="text" name="book_title" id="book_title" required>
+        <br>
+        <input type="submit" value="View Reviews" class="submit-btn">
+    </form>
+
+    {% if reviews %}
+      <div class="review-container">
+        {% for review in reviews %}
+          <div class="review-card">
+            <h3 class="review-title">{{ review.book_title }}</h3>
+            <div class="review-details">
+              <span class="rating">Rating: {{ review.rating }}</span>
+              <p class="review-text">{{ review.review }}</p>
+              <span class="reviewed-by">Reviewed by: <span class="username">{{ review.reviewed_by }}</span></span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No reviews available for this author.</p>
+    {% endif %}
+
+
+    <p>Go back to the home page <a href="/">here</a>.</p>
+  </div>
+</body>
+</html>

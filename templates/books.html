@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book Listing and Review</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title"> Book Listing and Write A Review </h1>
+    <form action="/books" method="GET" class="form">
+      <label for="author_name">Author Name:</label>
+      <input type="text" name="author_name" id="author_name" required>
+      <br>
+      <label for="num_books">Number of Books:</label>
+      <input type="number" name="num_books" id="num_books" required>
+      <br>
+      <label for="sort_option">Sort by:</label>
+      <select name="sort_option" id="sort_option">
+        <option value="publication">Publication</option>
+        <option value="rating">Rating</option>
+      </select>
+      <br>
+      <input type="submit" value="Get Books" class="submit-btn">
+    </form>
+    {% if book_data %}
+      <ol>
+        {% for book in book_data %}
+          <li>
+            {{ book.book_title }} - Published Date: {{ book.published_date }} - Average Rating: {{ book.average_rating }}
+            <form action="/write_review" method="POST">
+              <input type="hidden" name="author_name" value="{{ book.author_name }}">
+              <input type="hidden" name="book_title" value="{{ book.book_title }}">
+              <input type="hidden" name="published_date" value="{{ book.published_date }}">
+              <label for="rate">Rating (1-10):</label>
+              <input type="number" name="rate" id="rate" min="1" max="10" required>
+              <br>
+              <label for="review">Review:</label>
+              <textarea name="review" id="review" required></textarea>
+              <br>
+              <label for="username">Username:</label>
+              <input type="text" name="username" id="username" required>
+              <br>
+              <input type="submit" value="Submit Review" class="submit-btn">
+            </form>
+          </li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <p>No books found.</p>
+    {% endif %}
+    <p class="description">If you would like to go back to the home page click <a href="/">here</a></p>
+    <p class="description">If you would like to see reviews made by other people, please click <a href="/reviews">here</a> to go to the reviews page.</p>
+  </div>
+</body>
+</html>

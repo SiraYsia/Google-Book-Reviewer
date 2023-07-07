@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Reviewer</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Welcome to the Book Reviewer!</h1>
+        <p class="description">This program allows you to explore and review books by your favorite authors.</p>
+        <p class="description">You'll be able to retrieve book titles, average ratings, and publication dates.</p>
+        <p class="description">Additionally, you can write your own reviews for the books you've read and view reviews made by others and yourself.</p>
+
+        <form action="/books" method="GET" class="form">
+            <label for="author_name">Author Name:</label>
+            <input type="text" name="author_name" id="author_name" required>
+            <br>
+            <label for="num_books">Number of Books:</label>
+            <input type="number" name="num_books" id="num_books" required>
+            <br>
+            <input type="submit" value="Get Books" class="submit-btn">
+        </form>
+    </div>
+</body>
+</html>
