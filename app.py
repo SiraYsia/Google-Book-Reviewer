@@ -26,7 +26,6 @@ def get_books():
     book_data = retrieve_titles.to_dict(orient='records')
 
     return render_template('books.html', book_data=book_data)
-from flask import redirect, url_for
 
 @app.route('/write_review', methods=['POST'])
 def write_review():
