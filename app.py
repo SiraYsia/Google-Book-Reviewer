@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
+import git 
+from flask import Flask, render_template, url_for, flash, redirect, request
 from recomend import make_google_books_api_request, extract_book_titles, save_book_titles_to_database, retrieve_from_database, write_reviews, display_reviews
 import requests
 import pandas as pd
@@ -81,5 +82,15 @@ def reviews():
         else:
             return render_template('reviews.html', reviews=None)
 
+@app.route("/update_server", methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        repo = git.Repo('/home/CHANGE_TO_PYTHON_ANYWHERE_USERNAME/CHANGE_TO_GITHUB_REPO_NAME')
+        origin = repo.remotes.origin
+        origin.pull()
+        return 'Updated PythonAnywhere successfully', 200
+    else:
+        return 'Wrong event type', 400
+        
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
