@@ -1,12 +1,17 @@
-import git 
-from flask import Flask, render_template, url_for, flash, redirect, request
-from recomend import make_google_books_api_request, extract_book_titles, save_book_titles_to_database, retrieve_from_database, write_reviews, display_reviews
-import requests
+import os
 import pandas as pd
 import sqlalchemy as db
-import os
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, url_for, flash, redirect, request
+from recomend import make_google_books_api_request, extract_book_titles, save_book_titles_to_database, retrieve_from_database, write_reviews, display_reviews
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = 'cSuT6KxPuOayBkNnvTWXO0e0J'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///books_database.db'
+
+# Initialize SQLAlchemy
+db = SQLAlchemy(app)
 
 @app.route('/')
 def home():
@@ -41,7 +46,7 @@ def write_review():
     data_frame = pd.DataFrame(review_data, columns=['title', 'rate', 'review', 'username'])
 
     reviews_database = "reviews_db"
-    engine = db.create_engine(f'sqlite:///{reviews_database}.db')
+    engine = db.create_engine('sqlite:///{}.db'.format(reviews_database))
     with engine.connect() as connection:
         data_frame.to_sql('review_table', con=connection, if_exists='append', index=False)
 
@@ -58,7 +63,7 @@ def reviews():
     title = request.args.get('book_title')
 
     reviews_database = "reviews_db"
-    engine = db.create_engine(f'sqlite:///{reviews_database}.db')
+    engine = db.create_engine('sqlite:///{}.db'.format(reviews_database))
     with engine.connect() as connection:
         query = "SELECT * FROM review_table WHERE title = :title"
         query_result = connection.execute(db.text(query), {"title": title}).fetchall()

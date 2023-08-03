@@ -39,37 +39,30 @@ def extract_book_titles(data):
 
 # Function to save book information to a database
 def save_book_titles_to_database(book_info, books_database):
-
-    #It takes book_info (a list containing book information) as input and specifies the column names as
-    #'book_title', 'published_date', and 'average_rating'. Each item in book_info is a tuple representing
-    # a book's title, published date, and average rating.
-
     data_frame = pd.DataFrame(book_info, columns=['book_title', 'published_date', 'average_rating'])
 
-    #Create a SQLAlchemy engine for connecting to a SQLite database
-    engine = db.create_engine(f'sqlite:///{books_database}.db')
+    # Update the engine to use SQLite
+    engine = db.create_engine('sqlite:///books_database.db')
 
     # Establish a connection to the database
     with engine.connect() as connection:
         # Save the DataFrame as a table named 'book_info_table' in the database to access later in retrieve_from_database
         data_frame.to_sql('book_info_table', con=connection, if_exists='replace', index=False)
 
-
+# Function to retrieve data from the SQLite database
 def retrieve_from_database(books_database, sort_by):
-    engine = db.create_engine(f'sqlite:///{books_database}.db')
+    # Update the engine to use SQLite
+    engine = db.create_engine('sqlite:///books_database.db')
+
     with engine.connect() as connection:
         if sort_by == 'publication':
-            #a string to hold the SQL query statement
             query = "SELECT * FROM book_info_table ORDER BY published_date DESC"  # sort by publication date in descending order
         elif sort_by == 'rating':
             query = "SELECT * FROM book_info_table ORDER BY average_rating DESC"
         else:
-            #This query retrieves all columns from the table named book_info_table without any specific sorting order.
             query = "SELECT * FROM book_info_table"
-        #execute the quert 
-        # query_result contains a list of tuples, where each tuple represents a row of the query result.
+
         query_result = connection.execute(db.text(query)).fetchall()
-        #return as a data frame
         return pd.DataFrame(query_result)
 
 
