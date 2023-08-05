@@ -34,7 +34,7 @@ pip install Flask pandas SQLAlchemy requests
 1. Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/Biruk8/Google-Book-Reviewer.git
+git clone https://github.com/SiraYsia/Google-Book-Reviewer.git
 cd Google-Book-Reviewer
 ```
 
